@@ -4,6 +4,9 @@
 paper.Point.inject({
 	limJSON: function() {
 		return { x: this.x, y: this.y };
+	},
+	rotmod: function(point) {
+		return this.modulo(point).add(point).modulo(point);
 	}
 });
 
@@ -35,5 +38,22 @@ paper.Path.inject({
 			strokeColor: this.strokeColor.components,
 			strokeCap: this.strokeCap
 		};
+	}
+});
+
+
+/*
+ * Paper Layer Extentions
+ */
+var LimnLayer = paper.Layer.extend({
+	origin: new paper.Point(),
+	currentBoard: new paper.Point(),
+	boardSize: new paper.Point(2000),
+	move: function(delta) {
+		this.translate(delta);
+		this.origin = this.origin.add(delta);
+		
+		this.currentBoard = this.currentBoard.add(this.origin.divide(this.boardSize).floor());
+		this.origin = this.origin.rotmod(this.boardSize);
 	}
 });
