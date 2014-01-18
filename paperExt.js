@@ -43,6 +43,17 @@ paper.Path.inject({
 
 
 /*
+ * Paper Group Extentions
+ */
+paper.Group.inject({
+	board: new paper.Point(),
+	getOffset: function() {
+		return this.board.subtract(this.layer.currentBoard);
+	},
+});
+
+
+/*
  * Paper Layer Extentions
  */
 var LimnLayer = paper.Layer.extend({

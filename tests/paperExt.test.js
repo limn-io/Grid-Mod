@@ -138,3 +138,35 @@ test("Move Changes Current Board", function() {
 	deepEqual(lar.currentBoard, new paper.Point(0, 0), "Move back to starting board.");
 	deepEqual(lar.origin, new paper.Point(0, 0), "Move back to origin.");
 });
+
+
+/*
+ * Paper Group Extention Tests
+ */
+test("Group Tracks Its Offset", function() {
+	var gp = new paper.Group();
+	ok(gp.board, "Group has 'board' property.");
+	deepEqual(gp.board, new paper.Point(0, 0), "Initial board ID of 0,0.");
+	
+	gp.board = new paper.Point(3, -2);
+	
+	var lar = new LimnLayer({
+		children: [gp],
+		strokeColor: 'black',
+	});
+		
+	var mv1 = new paper.Point(6000, -4000);
+	lar.move(mv1);
+	
+	deepEqual(gp.board, new paper.Point(3, -2), "Board mantains ID regardless of position.");
+	
+	ok(gp.offset, "Group responds to offset getter.");
+	equal(typeof gp.offset, "object", "Group offset returns an object.");
+	
+	deepEqual(gp.offset, new paper.Point(), "No offset if on the same board.");
+	
+	var mv2 = new paper.Point(-6000, 2000);
+	lar.move(mv2);
+	
+	deepEqual(gp.offset, new paper.Point(3, -1), "Board offset equal to distance between ID and current.");
+});
