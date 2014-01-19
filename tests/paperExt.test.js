@@ -255,8 +255,9 @@ test("Path Import With Offset Compensation", function() {
 	deepEqual(new paper.Point(offimport.segments[0].point), new paper.Point(300, 100), "Correct import with offset.")
 });
 
-test("Current Board Initialization", function() {
+test("Board Initialization", function() {
 	var lar = new LimnLayer();
+	lar.origin = new paper.Point(100);
 	
 	var pnt = { x: 100, y: 50 }
 	var seg = {
@@ -286,7 +287,7 @@ test("Current Board Initialization", function() {
 	deepEqual(lar.children[0], gp, "Layer child is group.");
 	
 	
-	var mv1 = new paper.Point(-2000, 4000);
-	lar.move(mv1);
-	deepEqual(gp.children[0].exportJSON(), new paper.Path(path).exportJSON(), "Group contains correct path after import.")
+	var mv2 = new paper.Point(-2000, 4000);
+	lar.move(mv2);
+	deepEqual(new paper.Point(gp.children[0].segments[0].point), new paper.Point(200, 150), "Group contains correct point after import.")
 });

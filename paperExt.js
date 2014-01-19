@@ -79,7 +79,8 @@ paper.Group.inject({
 	},
 	initBoard: function(newBoard) {
 		var bid = new paper.Point(newBoard.boardID)
-		var offset = bid.subtract(this.layer.currentBoard).multiply(this.layer.boardSize);
+		var offset = bid.subtract(this.layer.currentBoard).multiply(this.layer.boardSize)
+			.add(this.layer.origin);
 		
 		this.remove();
 		return new paper.Group({
