@@ -2,8 +2,10 @@
  * Paper Point Extentions
  */
 paper.Point.inject({
-	limJSON: function() {
-		return { x: this.x, y: this.y };
+	limJSON: function(origin) {
+		var origin = origin? origin : new paper.Point();
+		var tmp = this.subtract(origin);
+		return { x: tmp.x, y: tmp.y };
 	},
 	rotmod: function(point) {
 		return this.modulo(point).add(point).modulo(point);
@@ -15,13 +17,21 @@ paper.Point.inject({
  * Paper Segment Extentions
  */
 paper.Segment.inject({
-	limJSON: function() {
+	limJSON: function(origin) {
+		var origin = origin? origin : new paper.Point();
 		return {
-			point: this.point.limJSON(),
+			point: this.point.limJSON(origin),
 			handleIn: [this.handleIn.x, this.handleIn.y],
 			handleOut: [this.handleOut.x, this.handleOut.y]
 		};
-	}
+	},
+	importWithOffset: function(seg, offset) {
+		return new paper.Segment({
+			point: offset.add( new paper.Point(seg.point) ),
+			handleIn: seg.handleIn,
+			handleOut: seg.handleOut
+		});
+	},
 });
 
 
@@ -30,15 +40,32 @@ paper.Segment.inject({
  */
 paper.Path.inject({
 	limJSON: function() {
+		var origin = this.layer.origin? this.layer.origin : new paper.Point();
+		
+		if(typeof this.parent.parent !== "undefined") {
+			origin = origin.subtract( this.parent.offset.multiply(this.layer.boardSize) );
+		}
+		
 		return {
 			segments: this.segments.map(function(seg){
-					return seg.limJSON();
+					return seg.limJSON(origin);
 				}),
 			strokeWidth: this.strokeWidth,
 			strokeColor: this.strokeColor.components,
 			strokeCap: this.strokeCap
 		};
-	}
+	},
+	importWithOffset: function(path, offset) {
+		this.remove();
+		return new paper.Path({
+			segments: path.segments.map(function(seg){
+				return (new paper.Segment()).importWithOffset(seg, offset);
+			}),
+			strokeWidth: path.strokeWidth,
+			strokeColor: path.strokeColor,
+			strokeCap: path.strokeCap
+		});
+	},
 });
 
 
@@ -50,6 +77,18 @@ paper.Group.inject({
 	getOffset: function() {
 		return this.board.subtract(this.layer.currentBoard);
 	},
+	initBoard: function(newBoard) {
+		var bid = new paper.Point(newBoard.boardID)
+		var offset = bid.subtract(this.layer.currentBoard).multiply(this.layer.boardSize);
+		
+		this.remove();
+		return new paper.Group({
+			board: bid,
+			children: newBoard.children.map(function(path){
+				return (new paper.Path()).importWithOffset(path, offset);
+			}),
+		});
+	}
 });
 
 

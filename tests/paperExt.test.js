@@ -139,6 +139,24 @@ test("Move Changes Current Board", function() {
 	deepEqual(lar.origin, new paper.Point(0, 0), "Move back to origin.");
 });
 
+test("Paths Export Relative To Layer Origin. (Within same board.)", function() {
+	var orig = { x: 110, y: 220 };
+	var pnt = new paper.Point(orig);
+	var path = new paper.Path(pnt);
+	var gp = new paper.Group(path);
+	
+	var lar = new LimnLayer({
+		children: [gp],
+		strokeColor: 'black',
+	});
+	
+	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained with no move.")
+	
+	var mv1 = new paper.Point(100, 400);
+	lar.move(mv1);
+	
+	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained after move.")
+});
 
 /*
  * Paper Group Extention Tests
@@ -169,4 +187,106 @@ test("Group Tracks Its Offset", function() {
 	lar.move(mv2);
 	
 	deepEqual(gp.offset, new paper.Point(3, -1), "Board offset equal to distance between ID and current.");
+});
+
+test("Paths Export Relative To The Board They Were Drawn.", function() {
+	var orig = { x: 110, y: 220 };
+	var pnt = new paper.Point(orig);
+	var path = new paper.Path(pnt);
+	var gp = new paper.Group(path);
+	
+	var lar = new LimnLayer({
+		children: [gp],
+		strokeColor: 'black',
+	});
+	
+	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained with no move.")
+	
+	var mv1 = new paper.Point(-100, -4000);
+	lar.move(mv1);
+	
+	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained after move.")
+});
+
+
+/*
+ * limn Board Import Tests
+ */
+test("Segment Import With Offset.", function() {
+	var pnt = { x: 100, y: 50 }
+	var seg = {
+		point: pnt,
+		handleIn: [-80, -100],
+		handleOut: [80, 100]
+	};
+	
+	var segment = new paper.Segment();
+	
+	ok(segment.importWithOffset, "Segment responds to 'importWithOffset'.");
+	
+	var zeroimport = segment.importWithOffset(seg, new paper.Point());
+	deepEqual(zeroimport, new paper.Segment(seg), "Correct import with no offset.")
+	
+	var offimport = segment.importWithOffset(seg, new paper.Point(200, 50));
+	deepEqual(new paper.Point(offimport.point), new paper.Point(300, 100), "Correct import with offset.")
+});
+
+test("Path Import With Offset Compensation", function() {
+	var pnt = { x: 100, y: 50 }
+	var seg = {
+		point: pnt,
+		handleIn: [-80, -100],
+		handleOut: [80, 100]
+	};
+	var path = {
+		segments: [seg],
+		strokeWidth: 8,
+		strokeColor: [1, 0.1, 0.5],
+		strokeCap: "round"
+	};
+	
+	var p = new paper.Path();
+	ok(p.importWithOffset, "Path responds to 'importWithOffset'.");
+	
+	var zeroimport = p.importWithOffset(path, new paper.Point())
+	deepEqual(zeroimport.exportJSON(), (new paper.Path(path)).exportJSON(), "Correct import with no offset.")
+	
+	var offimport = p.importWithOffset(path, new paper.Point(200, 50));
+	deepEqual(new paper.Point(offimport.segments[0].point), new paper.Point(300, 100), "Correct import with offset.")
+});
+
+test("Current Board Initialization", function() {
+	var lar = new LimnLayer();
+	
+	var pnt = { x: 100, y: 50 }
+	var seg = {
+		point: pnt,
+		handleIn: [-80, -100],
+		handleOut: [80, 100]
+	};
+	var path = {
+		segments: [seg],
+		strokeWidth: 8,
+		strokeColor: [1, 0.1, 0.5],
+		strokeCap: "round"
+	};
+	var group = {
+		boardID: { x: 1, y: -2 },
+		children: [path]
+	}
+	
+	var gp = new paper.Group();
+	ok(gp.initBoard, "Group responds to 'initBoard'.");
+	
+	gp = gp.initBoard(group);
+	deepEqual(gp.board, new paper.Point(1, -2), "Board ID set from import object.");
+	ok(gp.children[0], "Group contains a path after import.");
+	
+	equal(lar.children.length, 1, "Layer has one child.");
+	deepEqual(lar.children[0], gp, "Layer child is group.");
+	
+	
+	var mv1 = new paper.Point(-2000, 4000);
+	lar.move(mv1);
+	deepEqual(gp.children[0].exportJSON(), new paper.Path(path).exportJSON(), "Group contains correct path after import.")
 });
