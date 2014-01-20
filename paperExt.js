@@ -43,7 +43,7 @@ paper.Path.inject({
 		var origin = this.layer.origin? this.layer.origin : new paper.Point();
 		
 		if(typeof this.parent.parent !== "undefined") {
-			origin = origin.subtract( this.parent.offset.multiply(this.layer.boardSize) );
+			origin = origin.add( this.parent.offset.multiply(this.layer.boardSize) );
 		}
 		
 		return {
@@ -104,7 +104,7 @@ var LimnLayer = paper.Layer.extend({
 		this.translate(delta);
 		this.origin = this.origin.add(delta);
 		
-		this.currentBoard = this.currentBoard.add(this.origin.divide(this.boardSize).floor());
+		this.currentBoard = this.currentBoard.subtract(this.origin.divide(this.boardSize).floor());
 		this.origin = this.origin.rotmod(this.boardSize);
 	}
 });

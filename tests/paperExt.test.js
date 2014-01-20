@@ -120,17 +120,17 @@ test("Move Changes Current Board", function() {
 	
 	var mv2 = new paper.Point({ x: -30, y: -30 });
 	lar.move(mv2);
-	deepEqual(lar.currentBoard, new paper.Point(-1, 0), "Negative move changes to previous board.");
+	deepEqual(lar.currentBoard, new paper.Point(1, 0), "Negative move changes to previous board.");
 	deepEqual(lar.origin, new paper.Point(1980, 0), "Origin loops to boardSize on move.");
 	
 	var mv3 = new paper.Point({ x: 0, y: 7000 });
 	lar.move(mv3);
-	deepEqual(lar.currentBoard, new paper.Point(-1, 3), "Current board correct after muliboard move.");
+	deepEqual(lar.currentBoard, new paper.Point(1, -3), "Current board correct after muliboard move.");
 	deepEqual(lar.origin, new paper.Point(1980, 1000), "Origin correct after muliboard move.");
 
 	var mv4 = new paper.Point();
 	lar.move(mv4);
-	deepEqual(lar.currentBoard, new paper.Point(-1, 3), "Zero move doesn't change board.");
+	deepEqual(lar.currentBoard, new paper.Point(1, -3), "Zero move doesn't change board.");
 	deepEqual(lar.origin, new paper.Point(1980, 1000), "Zero move doesn't change origin.");
 	
 	var mv5 = new paper.Point(20, -7000);
@@ -166,7 +166,7 @@ test("Group Tracks Its Offset", function() {
 	ok(gp.board, "Group has 'board' property.");
 	deepEqual(gp.board, new paper.Point(0, 0), "Initial board ID of 0,0.");
 	
-	gp.board = new paper.Point(3, -2);
+	gp.board = new paper.Point(-3, 2);
 	
 	var lar = new LimnLayer({
 		children: [gp],
@@ -176,7 +176,7 @@ test("Group Tracks Its Offset", function() {
 	var mv1 = new paper.Point(6000, -4000);
 	lar.move(mv1);
 	
-	deepEqual(gp.board, new paper.Point(3, -2), "Board mantains ID regardless of position.");
+	deepEqual(gp.board, new paper.Point(-3, 2), "Board mantains ID regardless of position.");
 	
 	ok(gp.offset, "Group responds to offset getter.");
 	equal(typeof gp.offset, "object", "Group offset returns an object.");
@@ -186,7 +186,7 @@ test("Group Tracks Its Offset", function() {
 	var mv2 = new paper.Point(-6000, 2000);
 	lar.move(mv2);
 	
-	deepEqual(gp.offset, new paper.Point(3, -1), "Board offset equal to distance between ID and current.");
+	deepEqual(gp.offset, new paper.Point(-3, 1), "Board offset equal to distance between ID and current.");
 });
 
 test("Paths Export Relative To The Board They Were Drawn.", function() {
