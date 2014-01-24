@@ -19,11 +19,17 @@ paper.Point.inject({
 paper.Segment.inject({
 	limJSON: function(origin) {
 		var origin = origin? origin : new paper.Point();
-		return {
+		var tmp = {
 			point: this.point.limJSON(origin),
-			handleIn: [this.handleIn.x, this.handleIn.y],
-			handleOut: [this.handleOut.x, this.handleOut.y]
 		};
+		
+		if(!this.handleIn.isZero()){
+			tmp.handleIn = [this.handleIn.x, this.handleIn.y];
+		}
+		if(!this.handleOut.isZero()){
+			tmp.handleOut = [this.handleOut.x, this.handleOut.y];
+		}
+		return tmp;
 	},
 	importWithOffset: function(seg, offset) {
 		return new paper.Segment({
