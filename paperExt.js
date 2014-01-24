@@ -56,15 +56,14 @@ paper.Path.inject({
 		};
 	},
 	importWithOffset: function(path, offset) {
-		this.remove();
-		return new paper.Path({
-			segments: path.segments.map(function(seg){
-				return (new paper.Segment()).importWithOffset(seg, offset);
-			}),
-			strokeWidth: path.strokeWidth,
-			strokeColor: path.strokeColor,
-			strokeCap: path.strokeCap
+		this.segments = path.segments.map(function(seg){
+			return (new paper.Segment()).importWithOffset(seg, offset);
 		});
+		this.strokeWidth = path.strokeWidth;
+		this.strokeColor = path.strokeColor;
+		this.strokeCap = path.strokeCap;
+		
+		return this;
 	},
 });
 
@@ -82,13 +81,12 @@ paper.Group.inject({
 		var offset = bid.subtract(this.layer.currentBoard).multiply(this.layer.boardSize)
 			.add(this.layer.origin);
 		
-		this.remove();
-		return new paper.Group({
-			board: bid,
-			children: newBoard.children.map(function(path){
-				return (new paper.Path()).importWithOffset(path, offset);
-			}),
+		this.board = bid;
+		this.children = newBoard.children.map(function(path){
+			return (new paper.Path()).importWithOffset(path, offset);
 		});
+		
+		return this;
 	}
 });
 
