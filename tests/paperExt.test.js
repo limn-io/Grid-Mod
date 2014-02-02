@@ -291,3 +291,29 @@ test("Board Initialization", function() {
 	lar.move(mv2);
 	deepEqual(new paper.Point(gp.children[0].segments[0].point), new paper.Point(200, 150), "Group contains correct point after import.")
 });
+
+
+/*
+ * limn Group Item Add Tests
+ */
+test("Group Item Add", function() {
+	var lar = new LimnLayer();
+	
+	var gp = new paper.Group();
+	gp.board = new paper.Point(1, 2);
+	
+	var path = new paper.Path({
+		segments: [{
+			point: new paper.Point(100, 50),
+		}],
+		strokeWidth: 8,
+		strokeColor: [1, 0.1, 0.5],
+		strokeCap: "round"
+	});
+	
+	gp.addChild(path);
+	deepEqual(new paper.Point(path.segments[0].point), new paper.Point(100, 50), "Imported path in same global location.");
+	
+	gp.addChildWithOffset(path);
+	deepEqual(new paper.Point(path.segments[0].point), new paper.Point(2100, 4050), "Imported path relative to board group.");
+});

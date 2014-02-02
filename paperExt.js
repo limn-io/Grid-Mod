@@ -82,6 +82,14 @@ paper.Group.inject({
 	getOffset: function() {
 		return this.board.subtract(this.layer.currentBoard);
 	},
+	addChildWithOffset: function(child) {
+		child.position = this.offset.multiply(this.layer.boardSize)
+			.add(this.layer.origin)
+			.add(child.position);
+			
+		this.addChild(child);
+		return this;
+	},
 	initBoard: function(newBoard) {
 		var bid = new paper.Point(newBoard.boardID)
 		var offset = bid.subtract(this.layer.currentBoard).multiply(this.layer.boardSize)
