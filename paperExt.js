@@ -118,5 +118,14 @@ var LimnLayer = paper.Layer.extend({
 		
 		this.currentBoard = this.currentBoard.subtract(this.origin.divide(this.boardSize).floor());
 		this.origin = this.origin.rotmod(this.boardSize);
-	}
+	},
+	board: function(bID) {
+		for(var i = 0; i < this.children.length; i++){
+			if(this.children[i].board !== undefined && this.children[i].board.equals(bID)){
+				return this.children[i];
+			}
+		}
+		
+		return null;
+	},
 });

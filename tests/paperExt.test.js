@@ -317,3 +317,33 @@ test("Group Item Add", function() {
 	gp.addChildWithOffset(path);
 	deepEqual(new paper.Point(path.segments[0].point), new paper.Point(2100, 4050), "Imported path relative to board group.");
 });
+
+
+/*
+ * limn Layer Board Manipulation Tests
+ */
+test("Get and Remove Board By ID", function() {
+	var gp = new paper.Group();
+	gp.board = new paper.Point(1, 2);
+	
+	var gp2 = new paper.Group();
+	gp2.board = new paper.Point(5, 1);
+	
+	var lar = new LimnLayer({
+		children: [gp],
+		strokeColor: 'black',
+	});
+	
+	ok(lar.board, "Layer responds to board request.");
+	
+	deepEqual(lar.board(new paper.Point(0)), null, "Return null for non-existant group.");
+	
+	deepEqual(lar.board(new paper.Point(1, 2)), gp, "Return child group with correct id.");
+	
+	lar.addChildren([new paper.Path(), gp2]);
+	deepEqual(lar.board(new paper.Point(5, 1)), gp2, "Ignores paper items without 'board' attribute.");
+	
+	lar.board(new paper.Point(5, 1)).remove();
+	deepEqual(lar.board(new paper.Point(5, 1)), null, "Able to remove board after selection.");
+	
+});
