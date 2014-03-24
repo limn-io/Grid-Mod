@@ -4,7 +4,7 @@
 paper.Point.inject({
 	limJSON: function(origin) {
 		var origin = origin? origin : new paper.Point();
-		var tmp = this.subtract(origin);
+		var tmp = this.add(origin);
 		return { x: tmp.x, y: tmp.y };
 	},
 	rotmod: function(point) {
@@ -49,7 +49,7 @@ paper.Path.inject({
 		var origin = this.layer.origin? this.layer.origin : new paper.Point();
 		
 		if(typeof this.parent.parent !== "undefined") {
-			origin = origin.add( this.parent.offset.multiply(this.layer.boardSize) );
+			origin = origin.subtract( this.parent.offset.multiply(this.layer.boardSize) );
 		}
 		
 		return {
@@ -84,7 +84,7 @@ paper.Group.inject({
 	},
 	addChildWithOffset: function(child) {
 		child.position = this.offset.multiply(this.layer.boardSize)
-			.add(this.layer.origin)
+			.subtract(this.layer.origin)
 			.add(child.position);
 			
 		this.addChild(child);
@@ -93,7 +93,7 @@ paper.Group.inject({
 	initBoard: function(newBoard) {
 		var bid = new paper.Point(newBoard.boardID)
 		var offset = bid.subtract(this.layer.currentBoard).multiply(this.layer.boardSize)
-			.add(this.layer.origin);
+			.subtract(this.layer.origin);
 		
 		this.board = bid;
 		this.children = newBoard.children.map(function(path){
@@ -114,9 +114,9 @@ var LimnLayer = paper.Layer.extend({
 	boardSize: new paper.Point(2000),
 	move: function(delta) {
 		this.translate(delta);
-		this.origin = this.origin.add(delta);
+		this.origin = this.origin.subtract(delta);
 		
-		this.currentBoard = this.currentBoard.subtract(this.origin.divide(this.boardSize).floor());
+		this.currentBoard = this.currentBoard.add(this.origin.divide(this.boardSize).floor());
 		this.origin = this.origin.rotmod(this.boardSize);
 	},
 	board: function(bID) {

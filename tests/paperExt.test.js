@@ -83,11 +83,11 @@ test("Layer Move", function() {
 	var lar = new LimnLayer(path);
 	ok(lar.move, "Layer responds to move.");
 	
-	var offset = new paper.Point({ x: -10, y: -30 });
+	var offset = new paper.Point({ x: 10, y: 30 });
 	lar.move(offset);
 	
 	var pntAfter = new paper.Point(lar.children[0].segments[0].point)
-	deepEqual(pntAfter, new paper.Point({x: 40, y: 70}), "Position of child objects correct after move");
+	deepEqual(pntAfter, new paper.Point({x: 60, y: 130}), "Position of child objects correct after move");
 });
 
 test("Move Changes Board Origin. (no negatives)", function() {
@@ -96,13 +96,13 @@ test("Move Changes Board Origin. (no negatives)", function() {
 	ok(lar.origin, "Layer has 'origin' property.");
 	deepEqual(lar.origin, new paper.Point(0, 0), "Initial origin of 0,0.");
 	
-	var mv1 = new paper.Point({ x: 10, y: 30 });
+	var mv1 = new paper.Point({ x: -10, y: -30 });
 	lar.move(mv1);
-	deepEqual(lar.origin, mv1, "Origin after first move is equal to distance moved.");
+	deepEqual(lar.origin, mv1.negate(), "Origin after first move is equal to distance moved.");
 	
-	var mv2 = new paper.Point({ x: 50, y: 90 });
+	var mv2 = new paper.Point({ x: -50, y: -90 });
 	lar.move(mv2);
-	deepEqual(lar.origin, mv1.add(mv2), "Origin after all moves is equal to sum of moves.");
+	deepEqual(lar.origin, mv1.negate().add(mv2.negate()), "Origin after all moves is equal to sum of moves.");
 });
 
 test("Move Changes Current Board", function() {
@@ -114,26 +114,26 @@ test("Move Changes Current Board", function() {
 	deepEqual(lar.currentBoard, new paper.Point(0, 0), "Initial board of 0,0.");
 	deepEqual(lar.boardSize, new paper.Point(2000, 2000), "Initial board  size of 2000.");
 	
-	var mv1 = new paper.Point({ x: 10, y: 30 });
+	var mv1 = new paper.Point({ x: -10, y: -30 });
 	lar.move(mv1);
 	deepEqual(lar.currentBoard, new paper.Point(0, 0), "Board does not change if within bounds.");
 	
-	var mv2 = new paper.Point({ x: -30, y: -30 });
+	var mv2 = new paper.Point({ x: 30, y: 30 });
 	lar.move(mv2);
-	deepEqual(lar.currentBoard, new paper.Point(1, 0), "Negative move changes to previous board.");
+	deepEqual(lar.currentBoard, new paper.Point(-1, 0), "Negative move changes to previous board.");
 	deepEqual(lar.origin, new paper.Point(1980, 0), "Origin loops to boardSize on move.");
 	
-	var mv3 = new paper.Point({ x: 0, y: 7000 });
+	var mv3 = new paper.Point({ x: 0, y: -7000 });
 	lar.move(mv3);
-	deepEqual(lar.currentBoard, new paper.Point(1, -3), "Current board correct after muliboard move.");
+	deepEqual(lar.currentBoard, new paper.Point(-1, 3), "Current board correct after muliboard move.");
 	deepEqual(lar.origin, new paper.Point(1980, 1000), "Origin correct after muliboard move.");
 
 	var mv4 = new paper.Point();
 	lar.move(mv4);
-	deepEqual(lar.currentBoard, new paper.Point(1, -3), "Zero move doesn't change board.");
+	deepEqual(lar.currentBoard, new paper.Point(-1, 3), "Zero move doesn't change board.");
 	deepEqual(lar.origin, new paper.Point(1980, 1000), "Zero move doesn't change origin.");
 	
-	var mv5 = new paper.Point(20, -7000);
+	var mv5 = new paper.Point(-20, 7000);
 	lar.move(mv5);
 	deepEqual(lar.currentBoard, new paper.Point(0, 0), "Move back to starting board.");
 	deepEqual(lar.origin, new paper.Point(0, 0), "Move back to origin.");
@@ -152,7 +152,7 @@ test("Paths Export Relative To Layer Origin. (Within same board.)", function() {
 	
 	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained with no move.")
 	
-	var mv1 = new paper.Point(100, 400);
+	var mv1 = new paper.Point(-100, -400);
 	lar.move(mv1);
 	
 	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained after move.")
@@ -166,27 +166,27 @@ test("Group Tracks Its Offset", function() {
 	ok(gp.board, "Group has 'board' property.");
 	deepEqual(gp.board, new paper.Point(0, 0), "Initial board ID of 0,0.");
 	
-	gp.board = new paper.Point(-3, 2);
+	gp.board = new paper.Point(3, -2);
 	
 	var lar = new LimnLayer({
 		children: [gp],
 		strokeColor: 'black',
 	});
 		
-	var mv1 = new paper.Point(6000, -4000);
+	var mv1 = new paper.Point(-6000, 4000);
 	lar.move(mv1);
 	
-	deepEqual(gp.board, new paper.Point(-3, 2), "Board mantains ID regardless of position.");
+	deepEqual(gp.board, new paper.Point(3, -2), "Board mantains ID regardless of position.");
 	
 	ok(gp.offset, "Group responds to offset getter.");
 	equal(typeof gp.offset, "object", "Group offset returns an object.");
 	
 	deepEqual(gp.offset, new paper.Point(), "No offset if on the same board.");
 	
-	var mv2 = new paper.Point(-6000, 2000);
+	var mv2 = new paper.Point(6000, -2000);
 	lar.move(mv2);
 	
-	deepEqual(gp.offset, new paper.Point(-3, 1), "Board offset equal to distance between ID and current.");
+	deepEqual(gp.offset, new paper.Point(3, -1), "Board offset equal to distance between ID and current.");
 });
 
 test("Paths Export Relative To The Board They Were Drawn.", function() {
@@ -202,7 +202,7 @@ test("Paths Export Relative To The Board They Were Drawn.", function() {
 	
 	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained with no move.")
 	
-	var mv1 = new paper.Point(-100, -4000);
+	var mv1 = new paper.Point(100, 4000);
 	lar.move(mv1);
 	
 	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained after move.")
@@ -257,7 +257,7 @@ test("Path Import With Offset Compensation", function() {
 
 test("Board Initialization", function() {
 	var lar = new LimnLayer();
-	lar.origin = new paper.Point(100);
+	lar.origin = new paper.Point(-100);
 	
 	var pnt = { x: 100, y: 50 }
 	var seg = {
@@ -272,7 +272,7 @@ test("Board Initialization", function() {
 		strokeCap: "round"
 	};
 	var group = {
-		boardID: { x: 1, y: -2 },
+		boardID: { x: -1, y: 2 },
 		children: [path]
 	}
 	
@@ -280,14 +280,14 @@ test("Board Initialization", function() {
 	ok(gp.initBoard, "Group responds to 'initBoard'.");
 	
 	gp = gp.initBoard(group);
-	deepEqual(gp.board, new paper.Point(1, -2), "Board ID set from import object.");
+	deepEqual(gp.board, new paper.Point(-1, 2), "Board ID set from import object.");
 	ok(gp.children[0], "Group contains a path after import.");
 	
 	equal(lar.children.length, 1, "Layer has one child.");
 	deepEqual(lar.children[0], gp, "Layer child is group.");
 	
 	
-	var mv2 = new paper.Point(-2000, 4000);
+	var mv2 = new paper.Point(2000, -4000);
 	lar.move(mv2);
 	deepEqual(new paper.Point(gp.children[0].segments[0].point), new paper.Point(200, 150), "Group contains correct point after import.")
 });
