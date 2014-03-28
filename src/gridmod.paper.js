@@ -1,3 +1,8 @@
+/*!
+ * Copyright (c) 2014 Neil Vallon (http://limn.io)
+ * Licensed under MIT (http://opensource.org/licenses/MIT)
+ */
+
 /*
  * Paper Point Extentions
  */
