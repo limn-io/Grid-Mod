@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="http://paperjs.org/assets/js/paper.js"></script>
+	<script type="text/javascript" src="../paperExt.js"></script>
+	<script type="text/javascript">
+		window.onload = function() {
+			var canvas = document.getElementById('myCanvas');
+			paper.setup(canvas);
+
+			// Create JSON object containing a 50x50 square
+			var seg1 = { point: { x: 0, y: 0 } };
+			var seg2 = { point: { x: 50, y: 0 } };
+			var seg3 = { point: { x: 50, y: 50 } };
+			var seg4 = { point: { x: 0, y: 50 } };
+			var seg5 = { point: { x: 0, y: 0 } };
+			var path = {
+				segments: [seg1, seg2, seg3, seg4, seg5],
+				strokeWidth: 2,
+				strokeColor: "black",
+				strokeCap: "round"
+			};
+			var group = { children: [path] }
+			// End square JSON
+
+
+			var lar = new LimnLayer();
+
+			/*
+			 * Sets size of each board.
+			 * Since each square is 50x50 and the board size is 60
+			 *   the result should be a grid of squares at (0, 0) localy
+			 *   with a 10px spacing where the board extends.
+			 */
+			lar.boardSize = new paper.Point(60)
+			////
+
+			for(var x=0; x<10; x++){
+				for(var y=0; y<10; y++){
+					// Create a new group (board)
+					var gp = new paper.Group();
+
+					// Set board ID
+					// This will arrange group to correct offset automatically
+					group.boardID = { x: x, y: y };
+
+					// Add square to group
+					gp = gp.initBoard(group);
+
+					// Generate text ID to display positioning
+					var text = new paper.PointText({
+						position: new paper.Point(3, 15),
+						fillColor: "black",
+						content: group.boardID.x + ", " + group.boardID.y,
+					});
+					gp.addChildWithOffset(text);
+
+					// Add extra crossing lines to group
+					gp.addChildWithOffset(new paper.Path.Line({
+						from: [0, 0],
+						to: [50, 50],
+						strokeColor: 'black'
+					}));
+					gp.addChildWithOffset(new paper.Path.Line({
+						from: [50, 0],
+						to: [0, 50],
+						strokeColor: 'black'
+					}));
+
+					// simulate a move while writting to boards
+					var mv1 = new paper.Point({ x: -10, y: -10 });
+					lar.move(mv1);
+				}
+			}
+
+			// move layer back to origin
+			var mv2 = new paper.Point({ x: 1000, y: 1000 });
+			lar.move(mv2);
+
+			paper.view.draw(); // Redraw canvas
+
+
+			/*
+			 * Export group squares to JSON.
+			 * All square positions will be local to where they where they where drawn
+			 *   NOT where they apear on the screen.
+			 * The result is 100 50x50 squares all at the same position of (0,0).
+			 */
+			console.log(JSON.stringify(lar.children.map(function(gp){
+				return gp.children[0].limJSON();
+			})));
+		}
+	</script>
+</head>
+<body>
+	<canvas id="myCanvas" resize></canvas>
+</body>
+</html>
