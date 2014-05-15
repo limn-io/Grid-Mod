@@ -1,11 +1,15 @@
+// Check for node
+if(typeof window === 'undefined') {
+	var paper = require("paper");
+}
+
 test("paper.js file included", function() {
 	ok(paper, "Global paper object in scope");
 });
 
 
 /// setup
-var canvas = document.getElementById('testCanvas');
-paper.setup(canvas);
+paper.setup();
 ///
 
 

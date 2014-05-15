@@ -3,6 +3,11 @@
  * Licensed under MIT (http://opensource.org/licenses/MIT)
  */
 
+// Check for node
+if(typeof window === 'undefined') {
+	var paper = require("paper");
+}
+
 /*
  * Paper Point Extentions
  */
@@ -113,7 +118,7 @@ paper.Group.inject({
 /*
  * Paper Layer Extentions
  */
-var LimnLayer = paper.Layer.extend({
+LimnLayer = paper.Layer.extend({
 	origin: new paper.Point(),
 	currentBoard: new paper.Point(),
 	boardSize: new paper.Point(2000),

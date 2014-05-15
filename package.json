@@ -1,0 +1,31 @@
+{
+	"name": "gridmod",
+	"version" : "0.1.0",
+	"description": "A Modular Grid Extensions for Paper.js",
+	"license": "MIT",
+
+	"author"  : {
+		"name"  : "Neil Vallon",
+		"email" : "neilvallon@gmail.com",
+		"url"   : "http://neil.vallon.me/"
+	},
+
+	"main": "dist/gridmod.paper.min.js",
+
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:limn-io/Grid-Mod.git"
+	},
+
+	"dependencies": {
+		"paper": ">= 0.9.18"
+	},
+	"devDependencies": {
+		"qunit": ">= 0.6.3"
+	},
+
+	"scripts": {
+		"test": "node tests/qunit.js"
+	}
+
+}
