@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/limn-io/Grid-Mod.png)](https://travis-ci.org/limn-io/Grid-Mod)
+[![Build Status](https://travis-ci.org/limn-io/GridMod.png)](https://travis-ci.org/limn-io/GridMod)
 
 Grid Mod
 ========
