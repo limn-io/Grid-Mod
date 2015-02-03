@@ -27,6 +27,26 @@ test("Point to JSON", function() {
 	deepEqual(jsobj, orig, "toGMON returns the correct object.")
 });
 
+test("Point Position in Set", function() {
+	var pnt = new paper.Point(5, 7);
+
+	ok(pnt.inSet, "Point responds to inSet.");
+
+	var arr = [];
+	equal(pnt.inSet(arr), -1, "find in empty set should return sentinel");
+
+	arr.push(pnt);
+	equal(pnt.inSet(arr), 0, "should return position in set if found");
+
+	arr.unshift(new paper.Point());
+	equal(pnt.inSet(arr), 1, "should return position in set if found");
+
+	equal((new paper.Point(1)).inSet(arr), -1, "sentinel should also be returned if not in set");
+
+	arr.unshift(pnt);
+	equal(pnt.inSet(arr), 0, "match position of first occurence");
+});
+
 
 /*
  * Paper Segment Extention Tests
@@ -349,4 +369,24 @@ test("Get and Remove Board By ID", function() {
 	lar.board(new paper.Point(5, 1)).remove();
 	deepEqual(lar.board(new paper.Point(5, 1)), null, "Able to remove board after selection.");
 	
+});
+
+test("Layer board sets", function() {
+	var lar = new GMLayer();
+
+	ok(lar.boardSet, "layer responds to boardSet");
+	deepEqual(lar.boardSet(), [], "empty layer should have an empty board set");
+
+	var gp1 = new paper.Group();
+	gp1.board = new paper.Point(1, 2);
+	var gp2 = new paper.Group();
+	gp2.board = new paper.Point(5, 1);
+
+	lar.addChildren([gp1, gp2]);
+
+	deepEqual(lar.boardSet(), [gp1.board, gp2.board], "set should return IDs of boards added");
+
+	lar.addChild(new paper.Path());
+
+	deepEqual(lar.boardSet().length, 2, "board set should ignore non-group objects");
 });

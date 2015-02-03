@@ -19,6 +19,14 @@ paper.Point.inject({
 	},
 	rotmod: function(point) {
 		return this.modulo(point).add(point).modulo(point);
+	},
+	inSet: function(pntSet) {
+		for(var i = 0; i < pntSet.length; i++) {
+			if(this.equals(pntSet[i])) {
+				return i;
+			}
+		}
+		return -1;
 	}
 });
 
@@ -141,4 +149,14 @@ GMLayer = paper.Layer.extend({
 		
 		return null;
 	},
+	boardSet: function() {
+		var s = [];
+		for(var i = 0; i < this.children.length; i++) {
+			var id = this.children[i].board;
+			if(id !== undefined) {
+				s.push(id);
+			}
+		}
+		return s;
+	}
 });
