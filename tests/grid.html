@@ -24,7 +24,7 @@
 			// End square JSON
 
 
-			var lar = new LimnLayer();
+			var lar = new GMLayer();
 
 			/*
 			 * Sets size of each board.
@@ -87,7 +87,7 @@
 			 * The result is 100 50x50 squares all at the same position of (0,0).
 			 */
 			console.log(JSON.stringify(lar.children.map(function(gp){
-				return gp.children[0].limJSON();
+				return gp.children[0].toGMON();
 			})));
 		}
 	</script>

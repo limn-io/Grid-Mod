@@ -12,7 +12,7 @@ if(typeof window === 'undefined') {
  * Paper Point Extentions
  */
 paper.Point.inject({
-	limJSON: function(origin) {
+	toGMON: function(origin) {
 		var origin = origin? origin : new paper.Point();
 		var tmp = this.add(origin);
 		return { x: tmp.x, y: tmp.y };
@@ -27,10 +27,10 @@ paper.Point.inject({
  * Paper Segment Extentions
  */
 paper.Segment.inject({
-	limJSON: function(origin) {
+	toGMON: function(origin) {
 		var origin = origin? origin : new paper.Point();
 		var tmp = {
-			point: this.point.limJSON(origin),
+			point: this.point.toGMON(origin),
 		};
 		
 		if(!this.handleIn.isZero()){
@@ -55,7 +55,7 @@ paper.Segment.inject({
  * Paper Path Extentions
  */
 paper.Path.inject({
-	limJSON: function() {
+	toGMON: function() {
 		var origin = this.layer.origin? this.layer.origin : new paper.Point();
 		
 		if(typeof this.parent.parent !== "undefined") {
@@ -64,7 +64,7 @@ paper.Path.inject({
 		
 		return {
 			segments: this.segments.map(function(seg){
-					return seg.limJSON(origin);
+					return seg.toGMON(origin);
 				}),
 			strokeWidth: this.strokeWidth,
 			strokeColor: this.strokeColor.components,
@@ -118,7 +118,7 @@ paper.Group.inject({
 /*
  * Paper Layer Extentions
  */
-LimnLayer = paper.Layer.extend({
+GMLayer = paper.Layer.extend({
 	origin: new paper.Point(),
 	currentBoard: new paper.Point(),
 	boardSize: new paper.Point(2000),

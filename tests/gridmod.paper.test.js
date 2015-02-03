@@ -20,11 +20,11 @@ test("Point to JSON", function() {
 	var orig = { x: 23, y: 42 };
 	
 	var pnt = new paper.Point(orig);
-	ok(pnt.limJSON, "Point responds to limJSON.");
+	ok(pnt.toGMON, "Point responds to toGMON.");
 	
-	var jsobj = pnt.limJSON();
-	equal(typeof jsobj, "object", "limJSON returns an object.");
-	deepEqual(jsobj, orig, "limJSON returns the correct object.")
+	var jsobj = pnt.toGMON();
+	equal(typeof jsobj, "object", "toGMON returns an object.");
+	deepEqual(jsobj, orig, "toGMON returns the correct object.")
 });
 
 
@@ -39,11 +39,11 @@ test("Segment to JSON", function() {
 	};
 		
 	var seg = new paper.Segment(orig);
-	ok(seg.limJSON, "Segment responds to limJSON.");
+	ok(seg.toGMON, "Segment responds to toGMON.");
 	
-	var jsobj = seg.limJSON();
-	equal(typeof jsobj, "object", "limJSON returns an object.");
-	deepEqual(jsobj, orig, "limJSON returns the correct object.")
+	var jsobj = seg.toGMON();
+	equal(typeof jsobj, "object", "toGMON returns an object.");
+	deepEqual(jsobj, orig, "toGMON returns the correct object.")
 });
 
 
@@ -69,22 +69,22 @@ test("Path to JSON", function() {
 	};
 		
 	var path = new paper.Path(orig);
-	ok(path.limJSON, "Path responds to limJSON.");
+	ok(path.toGMON, "Path responds to toGMON.");
 	
-	var jsobj = path.limJSON();
-	equal(typeof jsobj, "object", "limJSON returns an object." );
-	deepEqual(jsobj, orig, "limJSON returns the correct object.")
+	var jsobj = path.toGMON();
+	equal(typeof jsobj, "object", "toGMON returns an object." );
+	deepEqual(jsobj, orig, "toGMON returns the correct object.")
 });
 
 
 /*
- * Limn Layer Extention Tests
+ * Layer Extention Tests
  */
 test("Layer Move", function() {
 	var pnt = new paper.Point({ x: 50, y: 100 });
 	var path = new paper.Path(pnt);
 	
-	var lar = new LimnLayer(path);
+	var lar = new GMLayer(path);
 	ok(lar.move, "Layer responds to move.");
 	
 	var offset = new paper.Point({ x: 10, y: 30 });
@@ -95,7 +95,7 @@ test("Layer Move", function() {
 });
 
 test("Move Changes Board Origin. (no negatives)", function() {
-	var lar = new LimnLayer();
+	var lar = new GMLayer();
 	
 	ok(lar.origin, "Layer has 'origin' property.");
 	deepEqual(lar.origin, new paper.Point(0, 0), "Initial origin of 0,0.");
@@ -110,7 +110,7 @@ test("Move Changes Board Origin. (no negatives)", function() {
 });
 
 test("Move Changes Current Board", function() {
-	var lar = new LimnLayer();
+	var lar = new GMLayer();
 	
 	ok(lar.currentBoard, "Layer has 'currentBoard' property.");
 	ok(lar.boardSize, "Layer has 'boardSize' property.");
@@ -149,17 +149,17 @@ test("Paths Export Relative To Layer Origin. (Within same board.)", function() {
 	var path = new paper.Path(pnt);
 	var gp = new paper.Group(path);
 	
-	var lar = new LimnLayer({
+	var lar = new GMLayer({
 		children: [gp],
 		strokeColor: 'black',
 	});
 	
-	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained with no move.")
+	deepEqual(path.toGMON().segments[0].point, orig, "Relative position retained with no move.")
 	
 	var mv1 = new paper.Point(-100, -400);
 	lar.move(mv1);
 	
-	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained after move.")
+	deepEqual(path.toGMON().segments[0].point, orig, "Relative position retained after move.")
 });
 
 /*
@@ -172,7 +172,7 @@ test("Group Tracks Its Offset", function() {
 	
 	gp.board = new paper.Point(3, -2);
 	
-	var lar = new LimnLayer({
+	var lar = new GMLayer({
 		children: [gp],
 		strokeColor: 'black',
 	});
@@ -199,22 +199,22 @@ test("Paths Export Relative To The Board They Were Drawn.", function() {
 	var path = new paper.Path(pnt);
 	var gp = new paper.Group(path);
 	
-	var lar = new LimnLayer({
+	var lar = new GMLayer({
 		children: [gp],
 		strokeColor: 'black',
 	});
 	
-	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained with no move.")
+	deepEqual(path.toGMON().segments[0].point, orig, "Relative position retained with no move.")
 	
 	var mv1 = new paper.Point(100, 4000);
 	lar.move(mv1);
 	
-	deepEqual(path.limJSON().segments[0].point, orig, "Relative position retained after move.")
+	deepEqual(path.toGMON().segments[0].point, orig, "Relative position retained after move.")
 });
 
 
 /*
- * limn Board Import Tests
+ * Board Import Tests
  */
 test("Segment Import With Offset.", function() {
 	var pnt = { x: 100, y: 50 }
@@ -260,7 +260,7 @@ test("Path Import With Offset Compensation", function() {
 });
 
 test("Board Initialization", function() {
-	var lar = new LimnLayer();
+	var lar = new GMLayer();
 	lar.origin = new paper.Point(-100);
 	
 	var pnt = { x: 100, y: 50 }
@@ -298,10 +298,10 @@ test("Board Initialization", function() {
 
 
 /*
- * limn Group Item Add Tests
+ * Group Item Add Tests
  */
 test("Group Item Add", function() {
-	var lar = new LimnLayer();
+	var lar = new GMLayer();
 	
 	var gp = new paper.Group();
 	gp.board = new paper.Point(1, 2);
@@ -324,7 +324,7 @@ test("Group Item Add", function() {
 
 
 /*
- * limn Layer Board Manipulation Tests
+ * Layer Board Manipulation Tests
  */
 test("Get and Remove Board By ID", function() {
 	var gp = new paper.Group();
@@ -333,7 +333,7 @@ test("Get and Remove Board By ID", function() {
 	var gp2 = new paper.Group();
 	gp2.board = new paper.Point(5, 1);
 	
-	var lar = new LimnLayer({
+	var lar = new GMLayer({
 		children: [gp],
 		strokeColor: 'black',
 	});
