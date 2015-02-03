@@ -64,11 +64,12 @@ paper.Path.inject({
 		
 		return {
 			segments: this.segments.map(function(seg){
-					return seg.toGMON(origin);
-				}),
+				return seg.toGMON(origin);
+			}),
 			strokeWidth: this.strokeWidth,
-			strokeColor: this.strokeColor.components,
-			strokeCap: this.strokeCap
+			strokeColor: this.strokeColor.components.map(function(s) {
+				return Math.floor(s*255); // float 0-1 => int 0-255
+			}),
 		};
 	},
 	importWithOffset: function(path, offset) {
@@ -76,9 +77,11 @@ paper.Path.inject({
 			return (new paper.Segment()).importWithOffset(seg, offset);
 		});
 		this.strokeWidth = path.strokeWidth;
-		this.strokeColor = path.strokeColor;
-		this.strokeCap = path.strokeCap;
-		
+		this.strokeColor = path.strokeColor.map(function(s) {
+			return s/255;  // int 0-255 => float 0-1
+		});
+		this.strokeCap = "round";
+
 		return this;
 	},
 });

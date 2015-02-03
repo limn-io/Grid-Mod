@@ -64,13 +64,12 @@ test("Path to JSON", function() {
 	var orig = {
 		segments: [seg1, seg2],
 		strokeWidth: 8,
-		strokeColor: [1, 0.1, 0.5],
-		strokeCap: "round"
+		strokeColor: [0, 0, 0],
 	};
-		
+
 	var path = new paper.Path(orig);
 	ok(path.toGMON, "Path responds to toGMON.");
-	
+
 	var jsobj = path.toGMON();
 	equal(typeof jsobj, "object", "toGMON returns an object." );
 	deepEqual(jsobj, orig, "toGMON returns the correct object.")
@@ -245,7 +244,7 @@ test("Path Import With Offset Compensation", function() {
 	var path = {
 		segments: [seg],
 		strokeWidth: 8,
-		strokeColor: [1, 0.1, 0.5],
+		strokeColor: [0, 0, 0],
 		strokeCap: "round"
 	};
 	
