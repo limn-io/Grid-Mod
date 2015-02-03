@@ -121,7 +121,7 @@ paper.Group.inject({
 GMLayer = paper.Layer.extend({
 	origin: new paper.Point(),
 	currentBoard: new paper.Point(),
-	boardSize: new paper.Point(2000),
+	boardSize: new paper.Point(1000),
 	move: function(delta) {
 		this.translate(delta);
 		this.origin = this.origin.subtract(delta);
